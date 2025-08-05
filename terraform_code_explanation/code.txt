@@ -1,0 +1,110 @@
+Terraform Code explaination:
+
+1.Provider Section:
+
+provider "azurerm" {
+  features {}
+  subscription_id = "4856fd4d-926c-494a-8a8f-a6f15a7c3622"
+}
+
+**************Terraform ku "Azure la work pannanum" nu sollra command**************
+-----------------------------------------------------------------------------------------------------------------------------------
+2.Resource Group:
+
+resource "azurerm_resource_group" "rg" {
+  name     = "portfolio-rg"
+  location = "East US"
+}
+
+********Resource Group na oru folder madhiri, Azure la ella resource (VM, IP, Storage) store aagura container.*********
+********Name = portfolio-rg. Location = East US.*******
+-----------------------------------------------------------------------------------------------------------------------------------
+3.Virtual Network + Subnet:
+
+resource "azurerm_virtual_network" "vnet" {
+  name          = "portfolio-vnet"
+  address_space = ["10.0.0.0/16"]
+  ...
+}
+resource "azurerm_subnet" "subnet" {
+  address_prefixes = ["10.0.1.0/24"]
+}
+
+****VM ku private network setup.******
+*****10.0.0.0/16 → range of private IP addresses.******
+****Subnet = oru small portion of vnet (like 10.0.1.0/24).*****
+-----------------------------------------------------------------------------------------------------------------------------------
+4.Network Security Group (NSG):
+
+resource "azurerm_network_security_group" "nsg" {
+  security_rule {
+    name  = "SSH"
+    ...
+    destination_port_range = "22"
+  }
+  security_rule {
+    name  = "HTTP"
+    ...
+    destination_port_range = "80"
+  }
+}
+
+*****NSG is firewall.********
+****We allow 22 (SSH) → VM connect panna.******
+****We allow 80 (HTTP) → Website open panna.****
+-----------------------------------------------------------------------------------------------------------------------------------
+5.Public IP + Network Interface (NIC):
+
+resource "azurerm_public_ip" "pip" { ... }
+resource "azurerm_network_interface" "nic" { ... }
+
+****Public IP → un VM ku world-la oru address kudukkum.****
+***NIC → VM oda network adapter (public + private IP attach aagum).****
+-----------------------------------------------------------------------------------------------------------------------------------
+6.VM Creation (CentOS):
+
+resource "azurerm_linux_virtual_machine" "vm" {
+  name     = "portfolio-vm"
+  size     = "Standard_B1s"
+  admin_username = "azureuser"
+  admin_ssh_key {
+    public_key = file("/home/azureuser/.ssh/id_rsa.pub")
+  }
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
+  }
+}
+
+****Standard_B1s = Free/cheap VM.***
+***Login pannura user = azureuser.****
+****SSH key use pannitu login panna (password illa).****
+***Image = ubuntu 22.****
+-----------------------------------------------------------------------------------------------------------------------------------
+7.Output (Public IP):
+
+output "public_ip" {
+  value = azurerm_public_ip.pip.ip_address
+}
+
+****terraform apply run pannina, end la VM public IP display pannum.****
+-----------------------------------------------------------------------------------------------------------------------------------
+Run Terraform Commands:
+
+terraform init
+terraform plan
+terraform apply
+-----------------------------------------------------------------------------------------------------------------------------------
+Get Public IP:
+
+After apply success, run:
+
+az vm list-ip-addresses -g portfolio-rg -n portfolio-vm -o table
+Ithu VM public IP kudukkum.
+-----------------------------------------------------------------------------------------------------------------------------------
+SSH to VM:
+
+ssh -i ~/.ssh/id_ed25519 azureuser@<public_ip>
+-----------------------------------------------------------------------------------------------------------------------------------

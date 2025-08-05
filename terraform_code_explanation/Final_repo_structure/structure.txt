@@ -1,0 +1,23 @@
+1.Final Repo Structure Plan:
+
+Sanjai-New-Portfolio-DevOps/
+│
+├── portfolio/                # Un existing portfolio code
+│
+├── Dockerfile                # Portfolio Docker image build file
+│
+├── terraform/
+│   ├── main.tf               # Azure VM + Network + NSG
+│   ├── variables.tf          # Input variables (VM size, region)
+│   ├── outputs.tf            # Public IP output
+│
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml         # GitHub Actions pipeline
+│
+├── scripts/
+│   ├── setup-docker.sh       # Install Docker in CentOS VM
+│   ├── deploy.sh             # Pull & run latest container
+│   └── monitor.sh            # Disk/CPU monitoring script
+│
+└── README.md                 # Full project guide

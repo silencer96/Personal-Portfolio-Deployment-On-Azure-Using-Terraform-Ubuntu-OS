@@ -29,3 +29,11 @@ This project demonstrates how to deploy a personal portfolio website on Microsof
 
 ## 📁 Folder Structure
 
+.
+├── main.tf # Terraform main configuration
+├── variables.tf # Terraform variables
+├── outputs.tf # Terraform outputs
+├── portfolio/ # Portfolio website source code
+│ └── Dockerfile # Docker config for portfolio
+└── README.md # This file
+

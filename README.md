@@ -41,5 +41,5 @@ This project demonstrates how to deploy a personal portfolio website on Microsof
 
 ## 🚀 Project Output Screenshot
 
-![Portfolio Output](images/Screenshot 2025-08-05 075813.png)
+![Portfolio Output](Screenshot 2025-08-05 075813.png)
 
